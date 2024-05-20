@@ -100,4 +100,8 @@ export class Schema<Shape extends AnyObject> {
     public static regex() {
         return new RegexSchemaKey({ type: SchemaTypes.RegExp });
     }
+
+    public static pattern() {
+        return Schema.regex();
+    }
 }
