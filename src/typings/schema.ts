@@ -6,6 +6,7 @@ import { DateSchemaKey } from '../structs/schema/DateSchemaKey';
 import { MapSchemaKey } from '../structs/schema/MapSchemaKey';
 import { NumberSchemaKey } from '../structs/schema/NumberSchemaKey';
 import { ObjectSchemaKey } from '../structs/schema/ObjectSchemaKey';
+import { RegexSchemaKey } from '../structs/schema/RegexSchemaKey';
 import { StringSchemaKey } from '../structs/schema/StringSchemaKey';
 import { AnyObject } from './utils';
 
@@ -20,6 +21,7 @@ export enum SchemaTypes {
     Date,
     Map,
     Json,
+    RegExp,
 }
 
 export type JSONValue =
@@ -41,6 +43,7 @@ export interface MappedSchemaTypes {
     [SchemaTypes.Date]: Date;
     [SchemaTypes.Map]: Map<string, unknown>;
     [SchemaTypes.Json]: JSONValue;
+    [SchemaTypes.RegExp]: RegExp;
 }
 
 export interface SchemaKeyOptions<Type extends SchemaTypes> {
@@ -75,6 +78,7 @@ export interface MappedSchemaKeys {
     [SchemaTypes.BigInt]: BigIntSchemaKey;
     [SchemaTypes.Date]: DateSchemaKey;
     [SchemaTypes.Map]: MapSchemaKey<AnySchemaKey, AnySchemaKey>;
+    [SchemaTypes.RegExp]: RegexSchemaKey;
 }
 
 export type ObjectShape = Record<string, AnySchemaKey>;
@@ -87,26 +91,29 @@ export type AnySchemaKey =
     | ObjectSchemaKey<ObjectShape>
     | BigIntSchemaKey
     | DateSchemaKey
-    | MapSchemaKey<AnySchemaKey, AnySchemaKey>;
+    | MapSchemaKey<AnySchemaKey, AnySchemaKey>
+    | RegexSchemaKey;
 
 export type InferType<S> = S extends MappedSchemaTypes[SchemaTypes]
-    ? S extends boolean
-        ? SchemaTypes.Boolean
-        : S extends string
-          ? SchemaTypes.String
-          : S extends Date
-            ? SchemaTypes.Date
-            : S extends Map<string, any>
-              ? SchemaTypes.Map
-              : S extends number
-                ? SchemaTypes.Number
-                : S extends unknown[]
-                  ? SchemaTypes.Array
-                  : S extends AnyObject
-                    ? SchemaTypes.Object
-                    : S extends bigint
-                      ? SchemaTypes.BigInt
-                      : never
+    ? S extends RegExp
+        ? SchemaTypes.RegExp
+        : S extends boolean
+          ? SchemaTypes.Boolean
+          : S extends string
+            ? SchemaTypes.String
+            : S extends Date
+              ? SchemaTypes.Date
+              : S extends Map<string, any>
+                ? SchemaTypes.Map
+                : S extends number
+                  ? SchemaTypes.Number
+                  : S extends unknown[]
+                    ? SchemaTypes.Array
+                    : S extends AnyObject
+                      ? SchemaTypes.Object
+                      : S extends bigint
+                        ? SchemaTypes.BigInt
+                        : never
     : never;
 
 export type Infer<S extends Schema<AnyObject>> = S extends Schema<infer T>

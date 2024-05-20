@@ -16,6 +16,7 @@ import { ObjectSchemaKey } from './schema/ObjectSchemaKey';
 import { BigIntSchemaKey } from './schema/BigIntSchemaKey';
 import { DateSchemaKey } from './schema/DateSchemaKey';
 import { MapSchemaKey } from './schema/MapSchemaKey';
+import { RegexSchemaKey } from './schema/RegexSchemaKey';
 
 export class Schema<Shape extends AnyObject> {
     public constructor(
@@ -94,5 +95,9 @@ export class Schema<Shape extends AnyObject> {
         value: V
     ) {
         return new MapSchemaKey(key, value, { type: SchemaTypes.Map });
+    }
+
+    public static regex() {
+        return new RegexSchemaKey({ type: SchemaTypes.RegExp });
     }
 }

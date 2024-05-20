@@ -2,6 +2,7 @@ import isPlainObject from 'is-plain-obj';
 import { SchemaTypes } from '../typings/schema';
 
 export const getTypeOf = (value: unknown) => {
+    if (value instanceof RegExp) return SchemaTypes.RegExp;
     if (value instanceof Map) return SchemaTypes.Map;
     if (value instanceof Date) return SchemaTypes.Date;
     if (Array.isArray(value)) return SchemaTypes.Array;
