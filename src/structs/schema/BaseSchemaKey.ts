@@ -31,6 +31,9 @@ export abstract class BaseSchemaKey<Type extends SchemaTypes> {
     }
 
     public parse(value: unknown) {
+        const { cast } = this.options;
+
+        if (cast) value = cast(value);
         if (!this.isSafe(value)) throw new Error('Invalid key type');
 
         for (const { effect, message } of this.effects) {
@@ -68,6 +71,12 @@ export abstract class BaseSchemaKey<Type extends SchemaTypes> {
             throw new Error('This schema key is already nullable');
 
         this.options.nullable = true;
+
+        return this;
+    }
+
+    public cast(fn: (value: unknown) => MappedSchemaTypes[Type]) {
+        this.options.cast = fn;
 
         return this;
     }

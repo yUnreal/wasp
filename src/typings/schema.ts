@@ -54,6 +54,7 @@ export interface SchemaKeyOptions<Type extends SchemaTypes> {
     optional?: true;
     default?(): MappedSchemaTypes[Type];
     nullable?: true;
+    cast?(value: unknown): MappedSchemaTypes[Type];
 }
 
 export interface SchemaOptions {
