@@ -11,6 +11,9 @@ import { StringSchemaKey } from '../structs/schema/StringSchemaKey';
 import { UUIDSchemaKey } from '../structs/schema/UUIDSchemaKey';
 import { AnyObject, UUID } from './utils';
 
+/**
+ * Types availables when creating a new schema key
+ */
 export enum SchemaTypes {
     String = 1,
     Number,
@@ -21,7 +24,6 @@ export enum SchemaTypes {
     BigInt,
     Date,
     Map,
-    Json,
     RegExp,
     UUID,
 }
@@ -49,18 +51,66 @@ export interface MappedSchemaTypes {
     [SchemaTypes.UUID]: UUID;
 }
 
+/**
+ * Options when creating a schema key
+ */
 export interface SchemaKeyOptions<Type extends SchemaTypes> {
+    /**
+     * The type of the schema key
+     */
     type: Type;
+    /**
+     * Whether this schema is optional or not
+     */
     optional?: true;
+    /**
+     * The default function for a default data
+     */
     default?(): MappedSchemaTypes[Type];
+    /**
+     * Whether the schema is nullable or not
+     */
     nullable?: true;
+    /**
+     * The cast function when validating a schema key
+     *
+     * @example
+     * type User = {
+     *    username: string;
+     * }
+     *
+     * const username = Schema.string().cast(String);
+     * const userSchema = new Schema<User>({
+     *    username,
+     * });
+     *
+     * // Works fine, `10` will be casted to String(10)
+     * userSchema.parse(10);
+     */
     cast?(value: unknown): MappedSchemaTypes[Type];
 }
 
+/**
+ * Options that can be used when creating a new schema
+ */
 export interface SchemaOptions {
+    /**
+     * Whether the schema is strict or not
+     */
     strict?: boolean;
 }
 
+/**
+ * Infer the schema object based in any POJO (Plain Old JavaScript Object)
+ *
+ * type User = {
+ *    username: string;
+ *    age: number;
+ * }
+ *
+ * // { username: StringSchemaKey; age: NumberSchemaKey; }
+ * type T1 = InferSchema<User>;
+ */
 export type InferSchema<S extends AnyObject> = {
     [K in keyof S]: InferType<S[K]> extends SchemaTypes.Array
         ? ArraySchemaKey<MappedSchemaKeys[InferType<S[K][number]>]>
@@ -88,6 +138,9 @@ export interface MappedSchemaKeys {
 
 export type ObjectShape = Record<string, AnySchemaKey>;
 
+/**
+ * All schemas key available
+ */
 export type AnySchemaKey =
     | BooleanSchemaKey
     | NumberSchemaKey
@@ -100,6 +153,9 @@ export type AnySchemaKey =
     | RegexSchemaKey
     | UUIDSchemaKey;
 
+/**
+ * Infer the type of a value based in itself
+ */
 export type InferType<S> = S extends MappedSchemaTypes[SchemaTypes]
     ? S extends RegExp
         ? SchemaTypes.RegExp
@@ -124,11 +180,27 @@ export type InferType<S> = S extends MappedSchemaTypes[SchemaTypes]
                           : never
     : never;
 
+/**
+ * Infer the raw type of a schema
+ *
+ * // { username: string; age: number; }
+ * type T1 = Infer<typeof userSchema>;
+ */
 export type Infer<S extends Schema<AnyObject>> = S extends Schema<infer T>
     ? T
     : never;
 
+/**
+ * Options used when creating a new effect in a schema key
+ */
 export interface SchemaKeyEffect<Type extends SchemaTypes> {
+    /**
+     * The function used to validate the effect
+     * @param value The value to use
+     */
     effect: (value: MappedSchemaTypes[Type]) => boolean;
+    /**
+     * The error message when the effect is not successfull
+     */
     message?: string;
 }

@@ -1,6 +1,9 @@
 import { InferType, SchemaTypes } from './schema';
 import { DeepPartial, PartialRecord } from './utils';
 
+/**
+ * Options used when querying document(s)
+ */
 export interface QueryOptions<
     T extends Record<string, unknown>,
     K extends keyof T = keyof T,
@@ -24,6 +27,9 @@ export interface QueryOptions<
     skip?: number;
 }
 
+/**
+ * Options used when deleting a document
+ */
 export interface DeleteOneOptions<T extends Record<string, unknown>>
     extends QueryOptions<T> {
     /**
@@ -32,17 +38,35 @@ export interface DeleteOneOptions<T extends Record<string, unknown>>
     throw?: true;
 }
 
+/**
+ * Options used when updating a document
+ */
 export interface UpdateOneOptions<T extends Record<string, unknown>> {
+    /**
+     * The keys to set/update the value
+     */
     Set?: DeepPartial<T>;
+    /**
+     * The keys to remove/delete
+     */
     Remove?: (keyof T)[];
 }
 
+/**
+ * Utility type for projecting document(s)
+ */
 export type Projection<T extends Record<string, unknown>> =
     | {
+          /**
+           * Whether the key must be selected or not
+           */
           [K in keyof T]?: boolean;
       }
     | (keyof T)[];
 
+/**
+ * All query operators
+ */
 export enum Operators {
     // Any
     Equal = 'Equal',
@@ -65,6 +89,9 @@ export enum Operators {
 
     // Map
     Size = 'Size',
+
+    // RegExp
+    Matches = 'Matches',
 }
 
 export interface BaseQuery {
@@ -105,6 +132,10 @@ export interface MapBasedQuery extends BaseQuery {
 
 export type BooleanBasedQuery = BaseQuery;
 
+export interface RegExpBasedQuery extends BaseQuery {
+    [Operators.Matches]?: string;
+}
+
 export interface MappedQuery {
     [SchemaTypes.Number]: NumberBasedQuery;
     [SchemaTypes.String]: StringBasedQuery;
@@ -114,8 +145,16 @@ export interface MappedQuery {
     [SchemaTypes.Date]: DateBasedQuery;
     [SchemaTypes.Map]: MapBasedQuery;
     [SchemaTypes.Object]: Record<string, BaseQuery>;
+    [SchemaTypes.UUID]: BaseQuery;
+    [SchemaTypes.RegExp]: RegExpBasedQuery;
 }
 
+/**
+ * All available objetct queries
+ */
 export type AnyQuery = MappedQuery[SchemaTypes];
 
+/**
+ * Infer the query
+ */
 export type InferQuery<T> = MappedQuery[InferType<T>];
