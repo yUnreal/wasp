@@ -27,7 +27,7 @@ export class Model<S extends Schema<AnyObject>> {
         return this.options.schema;
     }
 
-    protected get driver() {
+    public get driver() {
         return (
             this.options.driver ??
             new JSONBasedDriver<Infer<S>>(`./wuue/${this.name}.json`)

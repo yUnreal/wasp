@@ -11,3 +11,9 @@ export type IsExact<T, O> = [O] extends [T]
         ? true
         : false
     : false;
+
+export type UUID = `${string}-${string}-${string}-${string}-${string}`;
+
+export type IsAny<T> = boolean extends (T extends never ? true : false)
+    ? true
+    : false;

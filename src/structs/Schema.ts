@@ -17,6 +17,7 @@ import { BigIntSchemaKey } from './schema/BigIntSchemaKey';
 import { DateSchemaKey } from './schema/DateSchemaKey';
 import { MapSchemaKey } from './schema/MapSchemaKey';
 import { RegexSchemaKey } from './schema/RegexSchemaKey';
+import { UUIDSchemaKey } from './schema/UUIDSchemaKey';
 
 export class Schema<Shape extends AnyObject> {
     public constructor(
@@ -103,5 +104,9 @@ export class Schema<Shape extends AnyObject> {
 
     public static pattern() {
         return Schema.regex();
+    }
+
+    public static uuid() {
+        return new UUIDSchemaKey({ type: SchemaTypes.UUID });
     }
 }
