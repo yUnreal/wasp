@@ -1,3 +1,4 @@
+import { SchemaError } from '../../errors/SchemaError';
 import {
     MappedSchemaKeys,
     MappedSchemaTypes,
@@ -30,7 +31,17 @@ export abstract class BaseSchemaKey<Type extends SchemaTypes> {
         return this;
     }
 
-    public parse(value: unknown) {
+    public parse(value?: unknown) {
+        const { default: defaultFn } = this.options;
+
+        if (value === undefined) {
+            if (this.options.optional) return;
+            if (!defaultFn)
+                throw new SchemaError('Invalid value while parsing', this);
+
+            value = defaultFn();
+        }
+
         const { cast } = this.options;
 
         if (cast) value = cast(value);
