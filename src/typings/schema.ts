@@ -46,7 +46,6 @@ export interface MappedSchemaTypes {
     [SchemaTypes.BigInt]: bigint;
     [SchemaTypes.Date]: Date;
     [SchemaTypes.Map]: Map<string, unknown>;
-    [SchemaTypes.Json]: JSONValue;
     [SchemaTypes.RegExp]: RegExp;
     [SchemaTypes.UUID]: UUID;
 }
