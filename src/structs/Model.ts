@@ -15,9 +15,19 @@ import uuid from 'uuid-random';
 import { inspect } from 'util';
 import { QueryManager } from '../managers/QueryManager';
 import { ModelOptions } from '../typings/model';
+import { BaseCache } from '../managers/BaseCache';
 
-export class Model<S extends Schema<AnyObject>> {
-    public constructor(public options: ModelOptions<S>) {}
+export class Model<S extends Schema<AnyObject>> extends BaseCache<
+    string,
+    Doc<Infer<S>>
+> {
+    public constructor(public options: ModelOptions<S>) {
+        super(options.cache ?? { lifetime: Infinity });
+    }
+
+    protected isUsingCache() {
+        return Boolean(this.options.cache);
+    }
 
     public get name() {
         return this.options.name;
@@ -62,9 +72,19 @@ export class Model<S extends Schema<AnyObject>> {
         });
 
         if (!doc) return null;
-        if (projection) return new Doc(project(doc, projection), this);
+        if (projection) {
+            const createdDoc = new Doc(project(doc, projection), this);
 
-        return new Doc(doc, this);
+            if (this.isUsingCache()) this.cache.set(createdDoc.id, createdDoc);
+
+            return createdDoc;
+        }
+
+        const createdDoc = new Doc(doc, this);
+
+        if (this.isUsingCache()) this.cache.set(createdDoc.id, createdDoc);
+
+        return createdDoc;
     }
 
     public deleteOne(options: DeleteOneOptions<Infer<S>> | string) {
@@ -77,6 +97,8 @@ export class Model<S extends Schema<AnyObject>> {
 
             return null;
         }
+
+        this.cache.delete(doc.id);
 
         return doc;
     }
@@ -95,6 +117,8 @@ export class Model<S extends Schema<AnyObject>> {
             return data;
         });
 
+        // TODO: if (this.isUsingCache()) this.cache.set;
+
         return;
     }
 
@@ -111,7 +135,12 @@ export class Model<S extends Schema<AnyObject>> {
             return crrData;
         });
 
-        return new Doc(data, this);
+        // @ts-expect-error Fix this soon
+        const createdDoc = new Doc<Infer<S>>(data, this);
+
+        this.cache.set(createdDoc.id, createdDoc);
+
+        return createdDoc;
     }
 
     public createMany(...data: Infer<S>[]) {
