@@ -24,6 +24,14 @@ export class Model<S extends Schema<AnyObject>> {
 
         this.schema.parse(data);
 
+        for (const [key, value] of Object.entries(data)) {
+            if (value instanceof Date)
+                Object.defineProperty(data, key, {
+                    value: { $date: value.getTime() },
+                    enumerable: true,
+                });
+        }
+
         data.id ??= uuid();
 
         this.driver.update((crrData) =>

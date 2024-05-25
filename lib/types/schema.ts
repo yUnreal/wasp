@@ -1,5 +1,6 @@
 import { BigIntSchemaKey } from '../structs/schema/BigIntSchemaKey';
 import { BooleanSchemaKey } from '../structs/schema/BooleanSchemaKey';
+import { DateSchemaKey } from '../structs/schema/DateSchemaKey';
 import { NumberSchemaKey } from '../structs/schema/NumberSchemaKey';
 import { Schema } from '../structs/schema/Schema';
 import { StringSchemaKey } from '../structs/schema/StringSchemaKey';
@@ -10,6 +11,7 @@ export enum Types {
     Number,
     Boolean,
     BigInt,
+    Date,
 }
 
 export type SchemaDefinition = {
@@ -31,6 +33,7 @@ export interface MappedSchemaTypes {
     [Types.Number]: number;
     [Types.Boolean]: boolean;
     [Types.BigInt]: bigint;
+    [Types.Date]: Date;
 }
 
 export interface MappedSchemaKeys {
@@ -38,6 +41,7 @@ export interface MappedSchemaKeys {
     [Types.Number]: NumberSchemaKey;
     [Types.Boolean]: BooleanSchemaKey;
     [Types.BigInt]: BigIntSchemaKey;
+    [Types.Date]: DateSchemaKey;
 }
 
 export type InferShape<S extends AnyObject> = {
@@ -52,7 +56,9 @@ export type ExtractType<S> = S extends string
         ? Types.Boolean
         : S extends bigint
           ? Types.BigInt
-          : never;
+          : S extends Date
+            ? Types.Date
+            : never;
 
 export interface Constraint<Type extends Types> {
     effect(value: MappedSchemaTypes[Type]): unknown;

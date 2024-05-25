@@ -1,6 +1,8 @@
 import { Types } from '../types/schema';
 
 export const getType = (value: unknown) => {
+    if (value instanceof Date) return Types.Date;
+    
     switch (typeof value) {
     case 'number':
         return Types.Number;
