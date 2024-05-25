@@ -4,6 +4,7 @@ import { InferShape, SchemaKeyFlags, Types } from '../../types/schema';
 import { StringSchemaKey } from './StringSchemaKey';
 import { NumberSchemaKey } from './NumberSchemaKey';
 import { BooleanSchemaKey } from './BooleanSchemaKey';
+import { BigIntSchemaKey } from './BigIntSchemaKey';
 
 export class Schema<S extends AnyObject> {
     public constructor(public shape: Required<InferShape<S>>) {}
@@ -18,6 +19,10 @@ export class Schema<S extends AnyObject> {
 
     public static boolean() {
         return new BooleanSchemaKey({ type: Types.Boolean, flags: [] });
+    }
+
+    public static bigint() {
+        return new BigIntSchemaKey({ type: Types.BigInt, flags: [] });
     }
 
     public parse<O>(object: O) {
