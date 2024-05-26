@@ -1,6 +1,6 @@
 {
     "name": "wasp",
-    "version": "0.0.1",
+    "version": "1.0.0",
     "description": "The modern TypeScript local database",
     "main": "src/index.ts",
     "scripts": {
