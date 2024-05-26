@@ -1,7 +1,7 @@
 {
-    "name": "wuuedb",
+    "name": "wasp",
     "version": "0.0.1",
-    "description": "Wuue db",
+    "description": "The modern TypeScript local database",
     "main": "src/index.ts",
     "scripts": {
         "test": "tsx index.test.ts",
