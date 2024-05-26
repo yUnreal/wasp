@@ -6,6 +6,7 @@ import { NumberSchemaKey } from './NumberSchemaKey';
 import { BooleanSchemaKey } from './BooleanSchemaKey';
 import { BigIntSchemaKey } from './BigIntSchemaKey';
 import { DateSchemaKey } from './DateSchemaKey';
+import { AnySchemaKey } from './AnySchemaKey';
 
 export class Schema<S extends AnyObject> {
     public constructor(public shape: Required<InferShape<S>>) {}
@@ -28,6 +29,10 @@ export class Schema<S extends AnyObject> {
 
     public static date() {
         return new DateSchemaKey({ type: Types.Date, flags: [] });
+    }
+
+    public static any() {
+        return new AnySchemaKey({ type: Types.Any, flags: [] });
     }
 
     public parse<O>(object: O) {

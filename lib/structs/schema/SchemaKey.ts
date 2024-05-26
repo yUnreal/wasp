@@ -50,7 +50,7 @@ export abstract class SchemaKey<Type extends Types> {
     }
 
     public parse(value: unknown, key: string) {
-        if (getType(value) !== this.type)
+        if (this.type !== Types.Any && getType(value) !== this.type)
             throw new Error(`Invalid value, expected the type "${this.type}"`);
 
         for (const { effect, message } of this.constraints) {
